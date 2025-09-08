@@ -7,7 +7,7 @@
 
 ## 📖 Sobre o Projeto
 
-O NextPlay é uma aplicação web full-stack projetada para fornecer recomendações personalizadas de filmes, séries e músicas. Este projeto está sendo desenvolvido como parte dos meus estudos em [Seu Curso, ex: Ciência da Computação], com o objetivo de aplicar e aprofundar meus conhecimentos em desenvolvimento back-end com Java e Spring Boot, além de criar uma interface de usuário funcional com tecnologias front-end.
+O NextPlay é uma aplicação web full-stack projetada para fornecer recomendações personalizadas de filmes, séries e músicas. Este projeto está sendo desenvolvido por mim como parte dos meus estudos em Ciência da Computação, com o objetivo de aplicar e aprofundar meus conhecimentos em desenvolvimento full-stack.
 
 A ideia é que um usuário possa se cadastrar, fazer login, avaliar os itens de mídia que já consumiu e, com base nessas avaliações, receber sugestões inteligentes e personalizadas.
 
@@ -24,7 +24,7 @@ A ideia é que um usuário possa se cadastrar, fazer login, avaliar os itens de 
 O projeto é dividido em duas partes principais:
 
 **Back-end:**
-* **Java 17+**
+* **Java 24**
 * **Spring Boot:** Para a criação da API REST, segurança e configuração geral.
 * **Spring Data JPA / Hibernate:** Para a persistência de dados e comunicação com o banco.
 * **MySQL:** Como banco de dados relacional para armazenar os dados dos usuários, mídias e avaliações.
@@ -65,4 +65,4 @@ O plano de desenvolvimento segue as seguintes fases:
 
 Desenvolvido por **Gildo Júnior**.
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)]([https://linkedin.com/in/gildojuniorab])
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/gildojuniorab)
