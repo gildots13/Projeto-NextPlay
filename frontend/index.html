@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="img/icone.png" type="image/x-icon">
+    <link rel="stylesheet" href="css/style.css">
+    <title>NextPlay - As Melhores Indicações</title>
+</head>
+<body>
+    <header>
+        <a href="index.html" id="link-home">
+            <div id="logo">
+            <img src="./img/icone.png" alt="">
+            </div>
+            <div id="nome">
+                NextPlay
+            </div>
+        </a>
+        <div id="social-media">
+            <a href="https://www.linkedin.com/in/gildojuniorab" target="_blank">
+              <img src="./img/linkedin.svg" alt="LinkedIn">  
+            </a>
+            <a href="https://github.com/gildots13" target="_blank">
+                  <img src="./img/github.svg" alt="GitHub">
+              </a>
+              <a href="https://www.instagram.com/gildo_ts13" target="_blank">
+                  <img src="./img/instagram.svg" alt="Instagram">          
+                </a>
+        </div>
+    </header>
+
+    <main>
+        <section id="user">
+            <h2 id="criar-conta">Crie uma conta para acessar o serviço!</h2>
+
+            <form id="cadastro">
+                <div class="area-cadastro">
+                    <label for="nome-usuario">Nome:</label>
+                    <input type="text" id="nome-usuario" placeholder="Crie um nome de usuário" required>
+                </div>
+                <div class="area-cadastro">
+                    <label for="email-usuario">E-mail:</label>
+                    <input type="email" id="email-usuario" placeholder="Digite seu email" required>
+                </div>
+                <div class="area-cadastro">
+                    <label for="senha-usuario">Senha:</label>
+                    <input type="password" id="senha-usuario" placeholder="Crie uma senha" required>
+                </div>
+                <button type="submit" id="botao-criar">Criar Conta</button>
+            </form>
+
+            <p id="mensagem-status"></p>
+        </section>
+
+<section id="login-container">
+    <h2 id="fazer-login">Já tem uma conta? Faça o login!</h2>
+    <form id="form-login">
+        <div class="area-cadastro">
+            <label for="login-email">Email:</label>
+            <input type="email" id="login-email" placeholder="Digite seu email" required>
+        </div>
+        <div class="area-cadastro">
+            <label for="login-senha">Senha:</label>
+            <input type="password" id="login-senha" placeholder="Digite sua senha" required>
+        </div>
+        <button type="submit" id="btn-login">Entrar</button>
+    </form>
+
+    <p id="login-mensagem-status"></p>
+</section>
+    </main>
+
+    <script>
+        const formCadastro = document.getElementById('cadastro');
+        const mensagemStatus = document.getElementById('mensagem-status');
+
+        formCadastro.addEventListener('submit', function (event) {
+             
+            event.preventDefault();
+
+            const nomeInput = document.getElementById('nome-usuario').value;
+            const emailInput = document.getElementById('email-usuario').value;
+            const senhaInput = document.getElementById('senha-usuario').value;
+
+            const dadosParaEnviar = {
+                nome: nomeInput,
+                email: emailInput,
+                senha: senhaInput
+            };
+
+            fetch('http://localhost:8080/api/usuarios/cadastrar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dadosParaEnviar)
+            })
+            .then(response => {
+                
+                if (response.ok) {
+                    mensagemStatus.textContent = "Usuário criado com sucesso, agora faça seu login!";
+                    mensagemStatus.style.color = "green";
+                    formCadastro.reset();
+                    const containerLogin = document.getElementById('login-container');
+                    containerLogin.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    mensagemStatus.textContent = "Não foi possível criar este usuário, tente novamente.";
+                    mensagemStatus.style.color = "red";
+                }
+            })
+            .catch(error => {
+                console.error('Erro de conexão:', error);
+                mensagemStatus.textContent = "Não foi possível conectar ao servidor.";
+                mensagemStatus.style.color = "red";
+            });
+        });
+        const formLogin = document.getElementById('form-login');
+const loginMensagemStatus = document.getElementById('login-mensagem-status');
+
+formLogin.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const email = document.getElementById('login-email').value;
+    const senha = document.getElementById('login-senha').value;
+
+    const dadosLogin = {
+        email: email,
+        senha: senha
+    };
+
+    fetch('http://localhost:8080/api/usuarios/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dadosLogin)
+    })
+    .then(response => {
+        if (response.ok) {
+            loginMensagemStatus.textContent = "Login bem-sucedido! Redirecionando...";
+            loginMensagemStatus.style.color = "green";
+            
+            setTimeout(() => {
+                window.location.href = "dashboard.html";
+            }, 1500);
+            loginMensagemStatus.textContent = "Email ou senha inválidos.";
+            loginMensagemStatus.style.color = "red";
+        }
+    })
+    .catch(error => {
+        console.error('Erro de conexão:', error);
+        loginMensagemStatus.textContent = "Não foi possível conectar ao servidor.";
+        loginMensagemStatus.style.color = "red";
+    });
+});
+    </script>
+
+</body>
+</html>
