@@ -147,3 +147,50 @@ main {
     transform: scale(1.02);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
+/* ============================================== */
+/* ESTILOS PARA O CATÁLOGO DE FILMES NO DASHBOARD */
+/* ============================================== */
+.container-principal {
+    width: 90%;
+    max-width: 1200px;
+    margin: 40px 0;
+    text-align: center;
+}
+
+#catalogo-filmes {
+    display: grid; /* Usamos Grid Layout para uma galeria responsiva */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Mágica do Grid! */
+    gap: 25px; /* Espaço entre os cards */
+    margin-top: 30px;
+    width: 100%;
+}
+
+.filme-card {
+    background-color: rgb(24, 24, 31);
+    border: 1px solid rgb(55, 65, 81);
+    border-radius: 8px;
+    overflow: hidden; /* Garante que a imagem não "vaze" das bordas arredondadas */
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer; /* Indica que o card é clicável (para o futuro) */
+}
+
+.filme-card:hover {
+    transform: translateY(-10px); /* Efeito de "flutuar" */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.filme-card img {
+    width: 100%; /* Faz a imagem ocupar toda a largura do card */
+    height: auto;
+    display: block;
+}
+
+.filme-card h3 {
+    padding: 15px 10px;
+    font-size: 1rem;
+    min-height: 60px; /* Garante que os cards tenham alturas parecidas */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

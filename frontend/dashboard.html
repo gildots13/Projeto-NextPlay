@@ -30,13 +30,46 @@
     </header>
 
     <main>
-        <div class="principal">
-            <h1 id="inicio">Bem-Vindo ao NextPlay!</h1>
-            <p>Em breve, aqui você verá as melhores indicações de filmes, séries e músicas.</p>
-            <br>
-            <a href="index.html" class="link-sair">Sair (Logout)</a>
-        </div>
+    <div class="container-principal">
+        <h1>Catálogo de Filmes</h1>
+        <p>Avalie os filmes que você já assistiu para receber recomendações!</p>
+        
+        <div id="catalogo-filmes">
+            </div>
+    </div>
     </main>
-    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const catalogoContainer = document.getElementById('catalogo-filmes');
+        catalogoContainer.innerHTML = '<p>Carregando filmes...</p>';
+        fetch('http://localhost:8080/api/filmes')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Falha na rede ou no servidor');
+                }
+                return response.json();
+            })
+            .then(filmes => {
+                
+                catalogoContainer.innerHTML = '';
+                filmes.forEach(filme => {
+                    const card = document.createElement('div');
+                    card.className = 'filme-card';
+                    const poster = document.createElement('img');
+                    poster.src = filme.urlPoster;
+                    poster.alt = "Pôster do filme " + filme.titulo;
+                    const titulo = document.createElement('h3');
+                    titulo.textContent = filme.titulo;
+                    card.appendChild(poster);
+                    card.appendChild(titulo);
+                    catalogoContainer.appendChild(card);
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao buscar filmes:', error);
+                catalogoContainer.innerHTML = '<p style="color: red;">Não foi possível carregar os filmes. O servidor está rodando?</p>';
+            });
+    });
+    </script>
 </body>
 </html>
