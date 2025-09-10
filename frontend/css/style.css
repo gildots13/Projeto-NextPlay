@@ -147,9 +147,6 @@ main {
     transform: scale(1.02);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
-/* ============================================== */
-/* ESTILOS PARA O CATÁLOGO DE FILMES NO DASHBOARD */
-/* ============================================== */
 .container-principal {
     width: 90%;
     max-width: 1200px;
@@ -158,9 +155,9 @@ main {
 }
 
 #catalogo-filmes {
-    display: grid; /* Usamos Grid Layout para uma galeria responsiva */
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Mágica do Grid! */
-    gap: 25px; /* Espaço entre os cards */
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+    gap: 25px;
     margin-top: 30px;
     width: 100%;
 }
@@ -169,28 +166,41 @@ main {
     background-color: rgb(24, 24, 31);
     border: 1px solid rgb(55, 65, 81);
     border-radius: 8px;
-    overflow: hidden; /* Garante que a imagem não "vaze" das bordas arredondadas */
+    overflow: hidden;
     text-align: center;
     transition: transform 0.3s, box-shadow 0.3s;
-    cursor: pointer; /* Indica que o card é clicável (para o futuro) */
 }
-
 .filme-card:hover {
-    transform: translateY(-10px); /* Efeito de "flutuar" */
+    transform: translateY(-10px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
-
 .filme-card img {
-    width: 100%; /* Faz a imagem ocupar toda a largura do card */
-    height: auto;
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
     display: block;
 }
-
 .filme-card h3 {
     padding: 15px 10px;
     font-size: 1rem;
-    min-height: 60px; /* Garante que os cards tenham alturas parecidas */
+    min-height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+.rating-stars {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    color: #444;
+    font-size: 24px;
+    cursor: pointer;
+    padding-bottom: 10px;
+}
+.rating-stars > span:hover,
+.rating-stars > span:hover ~ span {
+    color: #ffc107;
+}
+.filme-card.avaliado {
+    border-color: #28a745;
 }

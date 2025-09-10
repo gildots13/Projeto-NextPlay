@@ -18,7 +18,7 @@ public class UsuarioController {
     private UsuarioRepository usuarioRepository;
 
     @PostMapping("/cadastrar")
-public ResponseEntity<String> cadastrarUsuario(@RequestBody Usuario novoUsuario) {
+    public ResponseEntity<String> cadastrarUsuario(@RequestBody Usuario novoUsuario) {
     Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(novoUsuario.getEmail());
     if (usuarioExistente.isPresent()) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body("Este email já está em uso.");
@@ -26,21 +26,24 @@ public ResponseEntity<String> cadastrarUsuario(@RequestBody Usuario novoUsuario)
     usuarioRepository.save(novoUsuario);
     return ResponseEntity.ok("Usuário cadastrado com sucesso!");
 }
-    
+
     @PostMapping("/login")
-    public ResponseEntity<String> loginUsuario(@RequestBody LoginRequestDTO loginRequest) {
+        public ResponseEntity<?> loginUsuario(@RequestBody LoginRequestDTO loginRequest) {
         Optional<Usuario> usuarioOptional = usuarioRepository.findByEmail(loginRequest.getEmail());
 
         if (usuarioOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou senha inválidos.");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou senha inválidos.");
         }
 
         Usuario usuario = usuarioOptional.get();
 
         if (loginRequest.getSenha().equals(usuario.getSenha())) {
-            return ResponseEntity.ok("Login bem-sucedido!");
+        return ResponseEntity.ok(java.util.Map.of(
+            "message", "Login bem-sucedido!",
+            "usuarioId", usuario.getId()
+        ));
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou senha inválidos.");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou senha inválidos.");
         }
     }
 }

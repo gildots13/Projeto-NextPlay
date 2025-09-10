@@ -16,5 +16,4 @@ public class BackendApplication {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
-
 }

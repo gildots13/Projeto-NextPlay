@@ -1,8 +1,8 @@
 package br.com.nextplay.backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TmdbMovieResultDTO {
@@ -17,6 +17,8 @@ public class TmdbMovieResultDTO {
     @JsonProperty("release_date")
     private String releaseDate;
 
+    @JsonProperty("genre_ids")
+    private List<Integer> genreIds;
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
     public String getTitle() { return title; }
@@ -27,4 +29,12 @@ public class TmdbMovieResultDTO {
     public void setPosterPath(String posterPath) { this.posterPath = posterPath; }
     public String getReleaseDate() { return releaseDate; }
     public void setReleaseDate(String releaseDate) { this.releaseDate = releaseDate; }
+
+    
+    public List<Integer> getGenreIds() {
+        return genreIds;
+    }
+    public void setGenreIds(List<Integer> genreIds) {
+        this.genreIds = genreIds;
+    }
 }

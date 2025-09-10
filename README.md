@@ -16,8 +16,8 @@ A ideia é que um usuário possa se cadastrar, fazer login, avaliar os itens de 
 -   [✅] **Cadastro de Usuário:** API e interface para criação de novas contas.
 -   [✅] **Autenticação de Usuário:** Sistema de Login para acesso seguro à plataforma.
 -   [✅/⏳] **Catálogo de Mídia (Filmes✅/Séries⏳/Músicas⏳):** Integração com a API do TMDb (The Movie Database) para popular o banco de dados com informações reais e atualizadas.
--   [⏳] **Sistema de Avaliação:** Funcionalidade para o usuário avaliar os itens do catálogo (ex: nota de 1 a 5 estrelas).
--   [⏳] **Motor de Recomendação:** Lógica no back-end para gerar e exibir recomendações personalizadas com base nas avaliações do usuário.
+-   [✅] **Sistema de Avaliação:** Funcionalidade para o usuário avaliar os itens do catálogo (ex: nota de 1 a 5 estrelas).
+-   [✅] **Motor de Recomendação:** Lógica no back-end para gerar e exibir recomendações personalizadas com base nas avaliações do usuário.
 -   [⏳] **Publicação do NextPlay:** Publicar o site para disponibilidade 100% online, sem a necessidade do usuário baixar os arquivos de código fonte e clonar o repositório.
 
 ## 🛠️ Tecnologias Utilizadas

@@ -2,6 +2,7 @@ package br.com.nextplay.backend.dto;
 
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import br.com.nextplay.backend.dto.TmdbMovieResultDTO;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TmdbResponseDTO {

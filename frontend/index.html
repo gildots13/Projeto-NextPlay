@@ -138,19 +138,24 @@ formLogin.addEventListener('submit', function(event) {
     })
     .then(response => {
         if (response.ok) {
-            loginMensagemStatus.textContent = "Login bem-sucedido! Redirecionando...";
-            loginMensagemStatus.style.color = "green";
-            
-            setTimeout(() => {
-                window.location.href = "dashboard.html";
-            }, 1500);
-            loginMensagemStatus.textContent = "Email ou senha inválidos.";
-            loginMensagemStatus.style.color = "red";
+        return response.json();
+        } else {
+        throw new Error('Credenciais inválidas');
         }
     })
-    .catch(error => {
-        console.error('Erro de conexão:', error);
-        loginMensagemStatus.textContent = "Não foi possível conectar ao servidor.";
+    .then(data => {
+        loginMensagemStatus.textContent = data.message + " Redirecionando...";
+        loginMensagemStatus.style.color = "green";
+        
+        sessionStorage.setItem('usuarioId', data.usuarioId);
+
+        setTimeout(() => {
+        window.location.href = "dashboard.html";
+        }, 1500);
+        })
+        .catch(error => {
+        console.error('Erro no login:', error);
+        loginMensagemStatus.textContent = "Email ou senha inválidos.";
         loginMensagemStatus.style.color = "red";
     });
 });

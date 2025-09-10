@@ -27,53 +27,48 @@ public class Filme {
     private String urlPoster;
 
     private String dataLancamento;
-
+    private String generos;
     
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
-
     public Long getTmdbId() {
         return tmdbId;
     }
-
     public void setTmdbId(Long tmdbId) {
         this.tmdbId = tmdbId;
     }
-
     public String getTitulo() {
         return titulo;
     }
-
     public void setTitulo(String titulo) {
         this.titulo = titulo;
     }
-
     public String getDescricao() {
         return descricao;
     }
-
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
-
     public String getUrlPoster() {
         return urlPoster;
     }
-
     public void setUrlPoster(String urlPoster) {
         this.urlPoster = urlPoster;
     }
-
     public String getDataLancamento() {
         return dataLancamento;
     }
-
     public void setDataLancamento(String dataLancamento) {
         this.dataLancamento = dataLancamento;
+    }
+    public String getGeneros() {
+        return generos;
+    }
+    public void setGeneros(String generos) {
+        this.generos = generos;
     }
 }
