@@ -1,18 +1,17 @@
 package br.com.nextplay.backend.service;
 
-import br.com.nextplay.backend.dto.GenreDTO;
-import br.com.nextplay.backend.dto.GenreResponseDTO;
-import br.com.nextplay.backend.dto.TmdbMovieResultDTO;
-import br.com.nextplay.backend.dto.TmdbResponseDTO;
+import br.com.nextplay.backend.dto.*;
 import br.com.nextplay.backend.model.Filme;
+import br.com.nextplay.backend.model.Serie;
 import br.com.nextplay.backend.repository.FilmeRepository;
+import br.com.nextplay.backend.repository.SerieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.List;
 
 @Service
 public class TmdbService {
@@ -25,12 +24,15 @@ public class TmdbService {
 
     @Autowired
     private FilmeRepository filmeRepository;
+    
+    @Autowired
+    private SerieRepository serieRepository;
 
     private final String TMDB_API_URL = "https://api.themoviedb.org/3";
 
-    private Map<Integer, String> getGenreMap() {
-        System.out.println("Buscando mapa de gêneros do TMDb...");
-        String url = TMDB_API_URL + "/genre/movie/list?api_key=" + apiKey + "&language=pt-BR";
+    private Map<Integer, String> getGenreMap(String type) {
+        System.out.println("Buscando mapa de gêneros para " + type + " do TMDb...");
+        String url = TMDB_API_URL + "/genre/" + type + "/list?api_key=" + apiKey + "&language=pt-BR";
         GenreResponseDTO response = restTemplate.getForObject(url, GenreResponseDTO.class);
         
         if (response != null && response.getGenres() != null) {
@@ -40,33 +42,37 @@ public class TmdbService {
         return java.util.Collections.emptyMap();
     }
     public void importarFilmesPopulares() {
-        Map<Integer, String> genreMap = getGenreMap();
+        Map<Integer, String> genreMap = getGenreMap("movie");
+    }
+    public void importarSeriesPopulares() {
+        Map<Integer, String> genreMap = getGenreMap("tv");
 
-        System.out.println("Iniciando importação de filmes populares do TMDb...");
-        for (int page = 1; page <= 10; page++) {
-            System.out.println("Buscando dados da página: " + page);
-            String url = TMDB_API_URL + "/movie/popular?api_key=" + apiKey + "&language=pt-BR&page=" + page;
+        System.out.println("Iniciando importação de séries populares do TMDb...");
+        for (int page = 1; page <= 25; page++) {
+            System.out.println("Buscando dados da página de séries: " + page);
             
-            TmdbResponseDTO response = restTemplate.getForObject(url, TmdbResponseDTO.class);
+            String url = TMDB_API_URL + "/tv/popular?api_key=" + apiKey + "&language=pt-BR&page=" + page;
+            
+            TmdbSerieResponseDTO response = restTemplate.getForObject(url, TmdbSerieResponseDTO.class);
             
             if (response != null && response.getResults() != null) {
-                for (TmdbMovieResultDTO filmeDto : response.getResults()) {
-                    if (!filmeRepository.existsByTmdbId(filmeDto.getId())) {
-                        Filme filme = new Filme();
-                        filme.setTmdbId(filmeDto.getId());
-                        filme.setTitulo(filmeDto.getTitle());
-                        filme.setDescricao(filmeDto.getOverview());
-                        filme.setDataLancamento(filmeDto.getReleaseDate());
-                        filme.setUrlPoster("https://image.tmdb.org/t/p/w500" + filmeDto.getPosterPath());
+                for (TmdbSerieResultDTO serieDto : response.getResults()) {
+                    if (!serieRepository.existsByTmdbId(serieDto.getId())) {
+                        Serie serie = new Serie();
+                        serie.setTmdbId(serieDto.getId());
+                        serie.setNome(serieDto.getName());
+                        serie.setDescricao(serieDto.getOverview());
+                        serie.setDataPrimeiroEpisodio(serieDto.getFirstAirDate());
+                        serie.setUrlPoster("https://image.tmdb.org/t/p/w500" + serieDto.getPosterPath());
 
-                        if (filmeDto.getGenreIds() != null) {
-                            String generos = filmeDto.getGenreIds().stream()
+                        if (serieDto.getGenreIds() != null) {
+                            String generos = serieDto.getGenreIds().stream()
                                     .map(genreId -> genreMap.getOrDefault(genreId, "Desconhecido"))
                                     .collect(Collectors.joining(", "));
-                            filme.setGeneros(generos);
+                            serie.setGeneros(generos);
                         }
                         
-                        filmeRepository.save(filme);
+                        serieRepository.save(serie);
                     }
                 }
                 
@@ -77,6 +83,6 @@ public class TmdbService {
                 }
             }
         }
-        System.out.println("Importação de filmes concluída com sucesso!");
+        System.out.println("Importação de séries concluída com sucesso!");
     }
 }

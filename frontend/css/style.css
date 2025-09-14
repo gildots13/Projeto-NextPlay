@@ -151,17 +151,30 @@ main {
     width: 90%;
     max-width: 1200px;
     margin: 40px 0;
+    margin-top: 1px;
     text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
-#catalogo-filmes {
+.catalogo-container {
+    display: none;
+    width: 100%;
+}
+#catalogo,
+#navegue {
+    font-family: "CriarConta";
+    background-image: linear-gradient(90deg, 
+        rgb(139, 92, 246),
+        rgb(236, 72, 153),
+        rgb(249, 115, 22));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.catalogo-container.active {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
     gap: 25px;
-    margin-top: 30px;
-    width: 100%;
 }
-
 .filme-card {
     background-color: rgb(24, 24, 31);
     border: 1px solid rgb(55, 65, 81);
@@ -169,6 +182,7 @@ main {
     overflow: hidden;
     text-align: center;
     transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
 }
 .filme-card:hover {
     transform: translateY(-10px);
@@ -188,6 +202,11 @@ main {
     align-items: center;
     justify-content: center;
 }
+#recomendacoes-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+    gap: 25px;
+}
 .rating-stars {
     display: flex;
     flex-direction: row-reverse;
@@ -196,11 +215,98 @@ main {
     font-size: 24px;
     cursor: pointer;
     padding-bottom: 10px;
+    margin-top: auto;
 }
 .rating-stars > span:hover,
 .rating-stars > span:hover ~ span {
     color: #ffc107;
 }
 .filme-card.avaliado {
-    border-color: #28a745;
+    border-color: #02ffc8;
 }
+/*ESTILIZAÇÃO DA NAV*/
+.nav-tabs {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgb(55, 65, 81);
+    padding-bottom: 10px;
+}
+.tab-button {
+    font-family: "NextPlay", sans-serif;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    border: none;
+    background-color: transparent;
+    color: #a1a1aa;
+    cursor: pointer;
+    transition: color 0.3s, border-bottom 0.3s;
+    border-bottom: 3px solid transparent;
+}
+.tab-button.active {
+    color: white;
+    border-bottom: 3px solid rgb(139, 92, 246);
+}
+.catalogo-container {
+    display: none;
+    width: 100%;
+}
+.catalogo-container.active {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 25px;
+}
+/**/
+.back-button {
+    grid-column: 1 / -1;
+    margin-bottom: 20px;
+    background-color: rgb(55, 65, 81);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    max-width: 120px;
+    justify-self: start;
+}
+.back-button:hover {
+    background-color: rgb(75, 85, 99);
+}
+.artista-card .artista-imagem {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    margin: 15px 0;
+    border: 3px solid rgb(55, 65, 81);
+}
+.musica-card {
+    flex-direction: column;
+    width: 100%;
+    height: 430px;
+    margin-bottom: 10px;
+    justify-content: space-between; 
+}
+/**/
+.filme-card img {
+    width: 100%;
+    display: block;
+}.filme-card:not(.artista-card):not(.album-card):not(.musica-card) img {
+    height: 300px;
+    object-fit: cover;
+}
+.artista-card .artista-imagem {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin: 15px auto;
+    border: 3px solid rgb(55, 65, 81);
+}
+.album-card img,
+.musica-card img {
+    width: 100%;
+    height: 230px;
+    object-fit: contain;
+}
+/**/
