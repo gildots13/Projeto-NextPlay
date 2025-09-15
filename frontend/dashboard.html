@@ -15,7 +15,7 @@
         </a>
         <div id="social-media">
             <a href="https://www.linkedin.com/in/gildojuniorab" target="_blank"><img src="./img/linkedin.svg" alt="LinkedIn"></a>
-            <a href="https://github.com/jonesbenson94-alt" target="_blank"><img src="./img/github.svg" alt="GitHub"></a>
+            <a href="https://github.com/gildots13" target="_blank"><img src="./img/github.svg" alt="GitHub"></a>
             <a href="https://www.instagram.com/gildo_ts13" target="_blank"><img src="./img/instagram.svg" alt="Instagram"></a>
         </div>
     </header>
@@ -48,32 +48,35 @@
             return;
         }
 
-        const tabButtons = document.querySelectorAll('.tab-button');//
-        const catalogoContainers = document.querySelectorAll('.catalogo-container');//
-
-            tabButtons.forEach(button => {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const catalogoContainers = document.querySelectorAll('.catalogo-container');
+        
+        tabButtons.forEach(button => {
             button.addEventListener('click', () => {
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            const targetId = button.dataset.target;
-            catalogoContainers.forEach(container => container.classList.remove('active'));
-            const targetContainer = document.getElementById(targetId);
-            targetContainer.classList.add('active');
-            if (targetContainer.childElementCount > 0 && targetContainer.innerHTML.includes('card')) {
-                return;
-            }
-            const tipo = targetId.split('-')[1];
-            
-            if (tipo === 'filmes' || tipo === 'series') {
-                buscarEExibirCatalogo(tipo, usuarioId, targetContainer);
-            } else if (tipo === 'musicas') {
-                exibirArtistas(usuarioId, targetContainer);
-            }
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                const targetId = button.dataset.target;
+                catalogoContainers.forEach(container => container.style.display = 'none');
+                
+                const targetContainer = document.getElementById(targetId);
+                targetContainer.style.display = 'grid';
+
+                const tipo = targetId.split('-')[1];
+
+                if (targetContainer.childElementCount === 0) {
+                    if (tipo === 'filmes' || tipo === 'series') {
+                        buscarEExibirCatalogo(tipo, usuarioId, targetContainer);
+                    } else if (tipo === 'musicas') {
+                        exibirArtistas(usuarioId, targetContainer);
+                    }
+                }
+                
+                buscarEExibirRecomendacoes(usuarioId, tipo); 
+            });
         });
-    });
+
         document.querySelector('.tab-button[data-target="catalogo-filmes"]').click();
-        console.log("===> PONTO DE CONTROLE 1: PRESTES A CHAMAR AS RECOMENDAÇÕES <===");//
-        buscarEExibirRecomendacoes(usuarioId);
     });
 
     function buscarEExibirCatalogo(tipo, usuarioId, container) {
@@ -83,47 +86,45 @@
             .then(items => {
                 container.innerHTML = '';
                 items.forEach(item => {
-                    const card = criarMidiaCard(item, usuarioId, tipo);
+                    const card = (tipo === 'filmes') ? criarFilmeCard(item, usuarioId) : criarSerieCard(item, usuarioId);
                     container.appendChild(card);
                 });
             });
     }
 
-    function buscarEExibirRecomendacoes(usuarioId) {
-        console.log("===> PONTO DE CONTROLE 2: FUNÇÃO DE RECOMENDAÇÕES FOI ACIONADA! <===");//
+    function buscarEExibirRecomendacoes(usuarioId, tipo) {
         const container = document.getElementById('recomendacoes-container');
-        container.innerHTML = `<p>Calculando recomendações...</p>`;
-        fetch(`http://localhost:8080/api/recomendacoes/${usuarioId}`)
+        const tipoEndpoint = tipo.replace('musicas', 'musica');
+        container.innerHTML = `<p>Calculando recomendações de ${tipoEndpoint}...</p>`;
+        
+        fetch(`http://localhost:8080/api/recomendacoes/${tipoEndpoint}/${usuarioId}`)
             .then(response => response.json())
-            .then(filmesRecomendados => {
+            .then(recomendacoes => {
                 container.innerHTML = '';
-                if (filmesRecomendados.length === 0) {
-                    container.innerHTML = '<p>Avalie mais filmes com 4 ou 5 estrelas para receber recomendações!</p>';
+                if (recomendacoes.length === 0) {
+                    container.innerHTML = `<p>Avalie mais itens de ${tipoEndpoint} com notas altas!</p>`;
                     return;
                 }
-                filmesRecomendados.forEach(filme => {
-                    const card = criarMidiaCard(filme, usuarioId, 'filmes');
-                    container.appendChild(card);
+                recomendacoes.forEach(item => {
+                    let card;
+                    if (tipo === 'filmes') card = criarFilmeCard(item, usuarioId);
+                    else if (tipo === 'series') card = criarSerieCard(item, usuarioId);
+                    else if (tipo === 'musicas') card = criarAlbumCard(item, usuarioId, container);
+                    if (card) container.appendChild(card);
                 });
             });
     }
-    
-    function criarMidiaCard(item, usuarioId, tipo) {
+
+    function criarFilmeCard(filme, usuarioId) {
         const card = document.createElement('div');
         card.className = 'filme-card';
-
         const poster = document.createElement('img');
-        poster.src = item.urlPoster;
-        
-        const nomeOuTitulo = (tipo === 'filmes') ? item.titulo : item.nome;
-        poster.alt = `Pôster de ${nomeOuTitulo}`;
-        
+        poster.src = filme.urlPoster;
+        poster.alt = "Pôster do filme " + filme.titulo;
         const titulo = document.createElement('h3');
-        titulo.textContent = nomeOuTitulo;
-        
+        titulo.textContent = filme.titulo;
         card.appendChild(poster);
         card.appendChild(titulo);
-        
         const ratingContainer = document.createElement('div');
         ratingContainer.className = 'rating-stars';
         for (let i = 1; i <= 5; i++) {
@@ -131,122 +132,115 @@
             star.innerHTML = '&#9733;';
             star.dataset.nota = 6 - i;
             ratingContainer.appendChild(star);
-            star.addEventListener('click', () => {
-                const nota = star.dataset.nota;
-                if (tipo === 'filmes') {
-                    enviarAvaliacao(item.id, usuarioId, nota, card);
-                } else {
-                    enviarAvaliacaoSerie(item.id, usuarioId, nota, card);
-                }
-            });
+            star.addEventListener('click', (e) => { e.stopPropagation(); enviarAvaliacao(filme.id, usuarioId, star.dataset.nota, card); });
         }
         card.appendChild(ratingContainer);
-
         return card;
     }
 
-    function enviarAvaliacao(filmeId, usuarioId, nota, cardElemento) {
-        const dadosAvaliacao = { usuarioId: parseInt(usuarioId), nota: parseInt(nota) };
-        fetch(`http://localhost:8080/api/filmes/${filmeId}/avaliar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dadosAvaliacao) })
-        .then(response => {
-            if(response.ok) {
-                alert(`Você avaliou o filme com ${nota} estrelas!`);
-                cardElemento.classList.add('avaliado');
-            } else { alert('Ocorreu um erro ao salvar sua avaliação de filme.'); }
-        });
+    function criarSerieCard(serie, usuarioId) {
+        const card = document.createElement('div');
+        card.className = 'filme-card';
+        const poster = document.createElement('img');
+        poster.src = serie.urlPoster;
+        poster.alt = "Pôster da série " + serie.nome;
+        const titulo = document.createElement('h3');
+        titulo.textContent = serie.nome;
+        card.appendChild(poster);
+        card.appendChild(titulo);
+        const ratingContainer = document.createElement('div');
+        ratingContainer.className = 'rating-stars';
+        for (let i = 1; i <= 5; i++) {
+            const star = document.createElement('span');
+            star.innerHTML = '&#9733;';
+            star.dataset.nota = 6 - i;
+            ratingContainer.appendChild(star);
+            star.addEventListener('click', (e) => { e.stopPropagation(); enviarAvaliacaoSerie(serie.id, usuarioId, star.dataset.nota, card); });
+        }
+        card.appendChild(ratingContainer);
+        return card;
     }
-    
-    function enviarAvaliacaoSerie(serieId, usuarioId, nota, cardElemento) {
-        const dadosAvaliacao = { usuarioId: parseInt(usuarioId), nota: parseInt(nota) };
-        fetch(`http://localhost:8080/api/series/${serieId}/avaliar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dadosAvaliacao) })
-        .then(response => {
-            if(response.ok) {
-                alert(`Você avaliou a série com ${nota} estrelas!`);
-                cardElemento.classList.add('avaliado');
-            } else { alert('Ocorreu um erro ao salvar sua avaliação de série.'); }
-        });
-    }
-
 
     function exibirArtistas(usuarioId, container) {
-    container.innerHTML = `<p>Carregando artistas...</p>`;
-    fetch(`http://localhost:8080/api/artistas`)
-        .then(res => res.json()).then(artistas => {
-            container.innerHTML = '';
-            artistas.forEach(artista => container.appendChild(criarArtistaCard(artista, usuarioId, container)));
-        });
-}
-function exibirAlbunsDeArtista(artista, usuarioId, container) {
-    container.innerHTML = `<p>Carregando álbuns de ${artista.nome}...</p>`;
-    fetch(`http://localhost:8080/api/artistas/${artista.id}/albuns`)
-        .then(res => res.json()).then(albuns => {
-            container.innerHTML = '';
-            container.appendChild(criarBotaoVoltar(() => exibirArtistas(usuarioId, container)));
-            albuns.forEach(album => container.appendChild(criarAlbumCard(album, usuarioId, container)));
-        });
-}
-function exibirMusicasDeAlbum(album, usuarioId, container) {
-    container.innerHTML = `<p>Carregando músicas de ${album.titulo}...</p>`;
-    fetch(`http://localhost:8080/api/albuns/${album.id}/musicas`)
-        .then(res => res.json()).then(musicas => {
-            container.innerHTML = '';
-            container.appendChild(criarBotaoVoltar(() => exibirAlbunsDeArtista({id: album.artista.id, nome: album.artista.nome}, usuarioId, container)));
-            musicas.forEach(musica => container.appendChild(criarMusicaCard(musica)));
-        });
-}
-function criarBotaoVoltar(acao) {
-    const backButton = document.createElement('button');
-    backButton.textContent = '← Voltar';
-    backButton.className = 'back-button';
-    backButton.addEventListener('click', acao);
-    return backButton;
-}
-function criarArtistaCard(artista, usuarioId, container) {
-    const card = document.createElement('div');
-    card.className = 'filme-card artista-card';
-    const imagem = document.createElement('img');
-    imagem.src = artista.urlImagem;
-    imagem.alt = `Foto de ${artista.nome}`;
-    imagem.className = 'artista-imagem';
-    const nome = document.createElement('h3');
-    nome.textContent = artista.nome;
-    card.appendChild(imagem);
-    card.appendChild(nome);
-    card.addEventListener('click', () => exibirAlbunsDeArtista(artista, usuarioId, container));
-    return card;
-}
-function criarAlbumCard(album, usuarioId, container) {
-    const card = document.createElement('div');
-    card.className = 'filme-card album-card';
-    const poster = document.createElement('img');
-    poster.src = album.urlCapa;
-    poster.alt = `Capa do álbum ${album.titulo}`;
-    const titulo = document.createElement('h3');
-    titulo.textContent = album.titulo;
-    card.appendChild(poster);
-    card.appendChild(titulo);
-    card.addEventListener('click', () => exibirMusicasDeAlbum(album, usuarioId, container));
-    return card;
-}
-function criarMusicaCard(musica, usuarioId) {
+        container.innerHTML = `<p>Carregando artistas...</p>`;
+        fetch(`http://localhost:8080/api/artistas`)
+            .then(res => res.json()).then(artistas => {
+                container.innerHTML = '';
+                artistas.forEach(artista => container.appendChild(criarArtistaCard(artista, usuarioId, container)));
+            });
+    }
+
+    function exibirAlbunsDeArtista(artista, usuarioId, container) {
+        container.innerHTML = `<p>Carregando álbuns de ${artista.nome}...</p>`;
+        fetch(`http://localhost:8080/api/artistas/${artista.id}/albuns`)
+            .then(res => res.json()).then(albuns => {
+                container.innerHTML = '';
+                container.appendChild(criarBotaoVoltar(() => exibirArtistas(usuarioId, container)));
+                albuns.forEach(album => container.appendChild(criarAlbumCard(album, usuarioId, container)));
+            });
+    }
+
+    function exibirMusicasDeAlbum(album, usuarioId, container) {
+        container.innerHTML = `<p>Carregando músicas de ${album.titulo}...</p>`;
+        fetch(`http://localhost:8080/api/albuns/${album.id}/musicas`)
+            .then(res => res.json()).then(musicas => {
+                container.innerHTML = '';
+                container.appendChild(criarBotaoVoltar(() => exibirAlbunsDeArtista(album.artista, usuarioId, container)));
+                musicas.forEach(musica => container.appendChild(criarMusicaCard(musica, usuarioId)));
+            });
+    }
+
+    function criarBotaoVoltar(acao) {
+        const backButton = document.createElement('button');
+        backButton.textContent = '← Voltar';
+        backButton.className = 'back-button';
+        backButton.addEventListener('click', acao);
+        return backButton;
+    }
+
+    function criarArtistaCard(artista, usuarioId, container) {
+        const card = document.createElement('div');
+        card.className = 'filme-card artista-card';
+        const imagem = document.createElement('img');
+        imagem.src = artista.urlImagem;
+        imagem.alt = `Foto de ${artista.nome}`;
+        imagem.className = 'artista-imagem';
+        const nome = document.createElement('h3');
+        nome.textContent = artista.nome;
+        card.appendChild(imagem);
+        card.appendChild(nome);
+        card.addEventListener('click', () => exibirAlbunsDeArtista(artista, usuarioId, container));
+        return card;
+    }
+
+    function criarAlbumCard(album, usuarioId, container) {
+        const card = document.createElement('div');
+        card.className = 'filme-card album-card';
+        const poster = document.createElement('img');
+        poster.src = album.urlCapa;
+        poster.alt = `Capa do álbum ${album.titulo}`;
+        const titulo = document.createElement('h3');
+        titulo.textContent = album.titulo;
+        card.appendChild(poster);
+        card.appendChild(titulo);
+        card.addEventListener('click', () => exibirMusicasDeAlbum(album, usuarioId, container));
+        return card;
+    }
+
+    function criarMusicaCard(musica, usuarioId) {
         const card = document.createElement('div');
         card.className = 'filme-card musica-card';
-
         const poster = document.createElement('img');
         poster.src = musica.album.urlCapa;
         poster.alt = `Capa do álbum ${musica.album.titulo}`;
-
         const titulo = document.createElement('h3');
         titulo.textContent = musica.titulo;
-
         const artista = document.createElement('p');
         artista.className = 'musica-artista';
         artista.textContent = musica.album.artista.nome;
-        
         card.appendChild(poster);
         card.appendChild(titulo);
         card.appendChild(artista);
-        
         if (musica.urlPreview) {
             const previewPlayer = document.createElement('audio');
             previewPlayer.className = 'musica-preview';
@@ -269,22 +263,25 @@ function criarMusicaCard(musica, usuarioId) {
         card.appendChild(ratingContainer);
         return card;
     }
-function enviarAvaliacaoMusica(musicaId, usuarioId, nota, cardElemento) {
-    const dadosAvaliacao = { usuarioId: parseInt(usuarioId), nota: parseInt(nota) };
-    fetch(`http://localhost:8080/api/musica/${musicaId}/avaliar`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dadosAvaliacao)
-    })
-    .then(response => {
-        if(response.ok) {
-            alert(`Você avaliou a música com ${nota} estrelas!`);
-            cardElemento.classList.add('avaliado');
-        } else {
-            alert('Ocorreu um erro ao salvar sua avaliação de música.');
-        }
-    });
-}
-    </script>
+
+    function enviarAvaliacao(filmeId, usuarioId, nota, cardElemento) {
+        const dadosAvaliacao = { usuarioId: parseInt(usuarioId), nota: parseInt(nota) };
+        fetch(`http://localhost:8080/api/filmes/${filmeId}/avaliar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dadosAvaliacao) })
+            .then(response => { if (response.ok) { alert(`Você avaliou o filme com ${nota} estrelas!`); cardElemento.classList.add('avaliado'); } else { alert('Erro ao salvar avaliação de filme.'); } });
+    }
+    
+    function enviarAvaliacaoSerie(serieId, usuarioId, nota, cardElemento) {
+        const dadosAvaliacao = { usuarioId: parseInt(usuarioId), nota: parseInt(nota) };
+        fetch(`http://localhost:8080/api/series/${serieId}/avaliar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dadosAvaliacao) })
+            .then(response => { if (response.ok) { alert(`Você avaliou a série com ${nota} estrelas!`); cardElemento.classList.add('avaliado'); } else { alert('Erro ao salvar avaliação de série.'); } });
+    }
+
+    function enviarAvaliacaoMusica(musicaId, usuarioId, nota, cardElemento) {
+        const dadosAvaliacao = { usuarioId: parseInt(usuarioId), nota: parseInt(nota) };
+        fetch(`http://localhost:8080/api/musica/${musicaId}/avaliar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dadosAvaliacao) })
+            .then(response => { if (response.ok) { alert(`Você avaliou a música com ${nota} estrelas! A função de recomendações da aba de música ainda não foi adicionada. Enquanto isso, receba suas recomendações de filmes e séries ao final de suas respectivas abas!`); cardElemento.classList.add('avaliado'); } else { alert('Erro ao salvar avaliação de música.'); } });
+    }
+</script>
+    
 </body>
 </html>

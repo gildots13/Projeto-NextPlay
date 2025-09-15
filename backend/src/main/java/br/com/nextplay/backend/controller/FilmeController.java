@@ -1,10 +1,10 @@
 package br.com.nextplay.backend.controller;
 
 import br.com.nextplay.backend.dto.AvaliacaoDTO;
-import br.com.nextplay.backend.model.Avaliacao;
+import br.com.nextplay.backend.model.AvaliacaoFilme;
 import br.com.nextplay.backend.model.Filme;
 import br.com.nextplay.backend.model.Usuario;
-import br.com.nextplay.backend.repository.AvaliacaoRepository;
+import br.com.nextplay.backend.repository.AvaliacaoFilmeRepository;
 import br.com.nextplay.backend.repository.FilmeRepository;
 import br.com.nextplay.backend.repository.UsuarioRepository;
 import br.com.nextplay.backend.service.TmdbService;
@@ -29,7 +29,7 @@ public class FilmeController {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private AvaliacaoRepository avaliacaoRepository;
+    private AvaliacaoFilmeRepository avaliacaoFilmeRepository;
 
     @PostMapping("/importar")
     public ResponseEntity<String> importarFilmesPopulares() {
@@ -42,26 +42,19 @@ public class FilmeController {
         return ResponseEntity.ok(filmes);
     }
 
-
     @PostMapping("/{filmeId}/avaliar")
-    public ResponseEntity<String> avaliarFilme(
-            @PathVariable Long filmeId,
-            @RequestBody AvaliacaoDTO avaliacaoDto) {
-        
+    public ResponseEntity<String> avaliarFilme(@PathVariable Long filmeId, @RequestBody AvaliacaoDTO avaliacaoDto) {
         Optional<Filme> filmeOpt = filmeRepository.findById(filmeId);
         Optional<Usuario> usuarioOpt = usuarioRepository.findById(avaliacaoDto.getUsuarioId());
-
         if (filmeOpt.isEmpty() || usuarioOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-
-        Avaliacao novaAvaliacao = new Avaliacao();
+        AvaliacaoFilme novaAvaliacao = new AvaliacaoFilme();
         novaAvaliacao.setFilme(filmeOpt.get());
         novaAvaliacao.setUsuario(usuarioOpt.get());
         novaAvaliacao.setNota(avaliacaoDto.getNota());
-        
-        avaliacaoRepository.save(novaAvaliacao);
-
+        avaliacaoFilmeRepository.save(novaAvaliacao);
         return ResponseEntity.ok("Avaliação salva com sucesso!");
     }
+    
 }

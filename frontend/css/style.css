@@ -12,7 +12,7 @@ body {
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 20px;
     color: white;
 }
 header {
@@ -147,6 +147,14 @@ main {
     transform: scale(1.02);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
+.loginMensagemStatus {
+    margin-bottom: 20px;
+    background-color: rgb(55, 65, 81);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+}
 .container-principal {
     width: 90%;
     max-width: 1200px;
@@ -237,22 +245,26 @@ main {
     padding: 10px 20px;
     border: none;
     background-color: transparent;
-    color: #a1a1aa;
+    color: #ffffff;
     cursor: pointer;
     transition: color 0.3s, border-bottom 0.3s;
     border-bottom: 3px solid transparent;
 }
 .tab-button.active {
-    color: white;
+   color: white;
     border-bottom: 3px solid rgb(139, 92, 246);
 }
 .catalogo-container {
     display: none;
     width: 100%;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
 }
 .catalogo-container.active {
+    display: none;
+    width: 100%;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 25px;
+    
 }
 /**/
 .back-button {
@@ -268,6 +280,11 @@ main {
     font-weight: bold;
     max-width: 120px;
     justify-self: start;
+    transition: color 0.3s, border-bottom 0.3s;
+    background-image: linear-gradient(90deg, 
+        rgb(139, 92, 246),
+        rgb(236, 72, 153),
+        rgb(249, 115, 22));
 }
 .back-button:hover {
     background-color: rgb(75, 85, 99);
@@ -286,6 +303,12 @@ main {
     height: 430px;
     margin-bottom: 10px;
     justify-content: space-between; 
+}
+.catalogo-series {
+    width: 100%;
+    display: block;
+    height: 300px;
+    object-fit: cover;
 }
 /**/
 .filme-card img {
@@ -309,4 +332,53 @@ main {
     height: 230px;
     object-fit: contain;
 }
-/**/
+.titulo-secao {
+    font-family: "CriarConta";
+    background-image: linear-gradient(90deg, 
+        rgb(139, 92, 246),
+        rgb(236, 72, 153),
+        rgb(249, 115, 22));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+/*Propriedades para responsividade em dispositivos*/
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        height: auto;
+        padding: 20px 15px;
+    }
+    #nome {
+        font-size: 3rem;
+        margin-top: 10px;
+    }
+    #social-media {
+        position: static;
+        margin-top: 20px;
+    }
+    .dashboard-grid {
+        grid-template-columns: 1fr; 
+        width: 95%;
+    }
+    .recomendacoes-sidebar {
+        position: static;
+        margin-top: 40px;
+    }
+    #user, #login-container {
+        width: 90%;
+        padding: 20px;
+    }
+    #cadastro, #form-login {
+        margin-left: 0;
+    }
+    #botao-criar, #btn-login {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .filme-card:not(.artista-card):not(.album-card):not(.musica-card) img {
+    height: 300px;
+    object-fit: contain;
+    background-color: rgb(40, 44, 51);
+}
+}

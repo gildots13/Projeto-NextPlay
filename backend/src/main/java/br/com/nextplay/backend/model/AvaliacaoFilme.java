@@ -10,7 +10,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "avaliacoes")
-public class Avaliacao {
+public class AvaliacaoFilme {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
