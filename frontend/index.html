@@ -72,6 +72,7 @@
     </main>
 
     <script>
+        const API_BASE_URL = "https://nextplay-backend.onrender.com";
         const formCadastro = document.getElementById('cadastro');
         const mensagemStatus = document.getElementById('mensagem-status');
 
@@ -89,7 +90,7 @@
                 senha: senhaInput
             };
 
-            fetch('http://localhost:8080/api/usuarios/cadastrar', {
+            fetch('https://nextplay-backend.onrender.com/api/usuarios/cadastrar', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -129,7 +130,7 @@ formLogin.addEventListener('submit', function(event) {
         senha: senha
     };
 
-    fetch('http://localhost:8080/api/usuarios/login', {
+    fetch('https://nextplay-backend.onrender.com/api/usuarios/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

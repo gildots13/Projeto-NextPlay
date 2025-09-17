@@ -41,6 +41,7 @@
     </main>
 
     <script>
+        const API_BASE_URL = "https://nextplay-backend.onrender.com";
     document.addEventListener('DOMContentLoaded', function() {
         const usuarioId = sessionStorage.getItem('usuarioId');
         if (!usuarioId) {
@@ -81,7 +82,7 @@
 
     function buscarEExibirCatalogo(tipo, usuarioId, container) {
         container.innerHTML = `<p>Carregando ${tipo}...</p>`;
-        fetch(`http://localhost:8080/api/${tipo}`)
+        fetch(`https://nextplay-backend.onrender.com/api/${tipo}`)
             .then(response => response.json())
             .then(items => {
                 container.innerHTML = '';
@@ -97,7 +98,7 @@
         const tipoEndpoint = tipo.replace('musicas', 'musica');
         container.innerHTML = `<p>Calculando recomendações de ${tipoEndpoint}...</p>`;
         
-        fetch(`http://localhost:8080/api/recomendacoes/${tipoEndpoint}/${usuarioId}`)
+        fetch(`https://nextplay-backend.onrender.com/api/recomendacoes/${tipoEndpoint}/${usuarioId}`)
             .then(response => response.json())
             .then(recomendacoes => {
                 container.innerHTML = '';
@@ -163,7 +164,7 @@
 
     function exibirArtistas(usuarioId, container) {
         container.innerHTML = `<p>Carregando artistas...</p>`;
-        fetch(`http://localhost:8080/api/artistas`)
+        fetch(`https://nextplay-backend.onrender.com/api/artistas`)
             .then(res => res.json()).then(artistas => {
                 container.innerHTML = '';
                 artistas.forEach(artista => container.appendChild(criarArtistaCard(artista, usuarioId, container)));
@@ -172,7 +173,7 @@
 
     function exibirAlbunsDeArtista(artista, usuarioId, container) {
         container.innerHTML = `<p>Carregando álbuns de ${artista.nome}...</p>`;
-        fetch(`http://localhost:8080/api/artistas/${artista.id}/albuns`)
+        fetch(`https://nextplay-backend.onrender.com/api/artistas/${artista.id}/albuns`)
             .then(res => res.json()).then(albuns => {
                 container.innerHTML = '';
                 container.appendChild(criarBotaoVoltar(() => exibirArtistas(usuarioId, container)));
@@ -182,7 +183,7 @@
 
     function exibirMusicasDeAlbum(album, usuarioId, container) {
         container.innerHTML = `<p>Carregando músicas de ${album.titulo}...</p>`;
-        fetch(`http://localhost:8080/api/albuns/${album.id}/musicas`)
+        fetch(`https://nextplay-backend.onrender.com/api/albuns/${album.id}/musicas`)
             .then(res => res.json()).then(musicas => {
                 container.innerHTML = '';
                 container.appendChild(criarBotaoVoltar(() => exibirAlbunsDeArtista(album.artista, usuarioId, container)));
@@ -266,19 +267,19 @@
 
     function enviarAvaliacao(filmeId, usuarioId, nota, cardElemento) {
         const dadosAvaliacao = { usuarioId: parseInt(usuarioId), nota: parseInt(nota) };
-        fetch(`http://localhost:8080/api/filmes/${filmeId}/avaliar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dadosAvaliacao) })
+        fetch(`https://nextplay-backend.onrender.com/api/filmes/${filmeId}/avaliar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dadosAvaliacao) })
             .then(response => { if (response.ok) { alert(`Você avaliou o filme com ${nota} estrelas!`); cardElemento.classList.add('avaliado'); } else { alert('Erro ao salvar avaliação de filme.'); } });
     }
     
     function enviarAvaliacaoSerie(serieId, usuarioId, nota, cardElemento) {
         const dadosAvaliacao = { usuarioId: parseInt(usuarioId), nota: parseInt(nota) };
-        fetch(`http://localhost:8080/api/series/${serieId}/avaliar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dadosAvaliacao) })
+        fetch(`https://nextplay-backend.onrender.com/api/series/${serieId}/avaliar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dadosAvaliacao) })
             .then(response => { if (response.ok) { alert(`Você avaliou a série com ${nota} estrelas!`); cardElemento.classList.add('avaliado'); } else { alert('Erro ao salvar avaliação de série.'); } });
     }
 
     function enviarAvaliacaoMusica(musicaId, usuarioId, nota, cardElemento) {
         const dadosAvaliacao = { usuarioId: parseInt(usuarioId), nota: parseInt(nota) };
-        fetch(`http://localhost:8080/api/musica/${musicaId}/avaliar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dadosAvaliacao) })
+        fetch(`https://nextplay-backend.onrender.com/api/musica/${musicaId}/avaliar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dadosAvaliacao) })
             .then(response => { if (response.ok) { alert(`Você avaliou a música com ${nota} estrelas! A função de recomendações da aba de música ainda não foi adicionada. Enquanto isso, receba suas recomendações de filmes e séries ao final de suas respectivas abas!`); cardElemento.classList.add('avaliado'); } else { alert('Erro ao salvar avaliação de música.'); } });
     }
 </script>
