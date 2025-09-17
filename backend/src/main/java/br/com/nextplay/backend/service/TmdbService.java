@@ -43,6 +43,37 @@ public class TmdbService {
     }
     public void importarFilmesPopulares() {
         Map<Integer, String> genreMap = getGenreMap("movie");
+        System.out.println("Iniciando importação de filmes populares do TMDb...");
+        for (int page = 1; page <= 25; page++) {
+            System.out.println("Buscando dados da página de filmes: " + page);
+            String url = TMDB_API_URL + "/movie/popular?api_key=" + apiKey + "&language=pt-BR&page=" + page;
+            TmdbResponseDTO response = restTemplate.getForObject(url, TmdbResponseDTO.class);
+            if (response != null && response.getResults() != null) {
+                for (TmdbMovieResultDTO filmeDto : response.getResults()) {
+                    if (!filmeRepository.existsByTmdbId(filmeDto.getId())) {
+                        Filme filme = new Filme();
+                        filme.setTmdbId(filmeDto.getId());
+                        filme.setTitulo(filmeDto.getTitle());
+                        filme.setDescricao(filmeDto.getOverview());
+                        filme.setDataLancamento(filmeDto.getReleaseDate());
+                        filme.setUrlPoster("https://image.tmdb.org/t/p/w500" + filmeDto.getPosterPath());
+                        if (filmeDto.getGenreIds() != null) {
+                            String generos = filmeDto.getGenreIds().stream()
+                                    .map(genreId -> genreMap.getOrDefault(genreId, ""))
+                                    .collect(Collectors.joining(", "));
+                            filme.setGeneros(generos);
+                        }
+                        filmeRepository.save(filme);
+                    }
+                }
+                try {
+                    Thread.sleep(700); 
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+        System.out.println("Importação de filmes concluída com sucesso!");
     }
     public void importarSeriesPopulares() {
         Map<Integer, String> genreMap = getGenreMap("tv");
