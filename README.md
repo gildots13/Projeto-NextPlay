@@ -42,7 +42,8 @@ O projeto é dividido em duas partes principais:
 Para executar este projeto há duas maneiras:
 
 **Online:**
-*Acesse: https://nextplaybr.netlify.app
+Acesse: nextplaybr.netlify.app
+* Ao entrar no site e cadastrar ou logar um usuário, haverá um tempo de espera de 50 segundos, para que o servidor fique completamente online.
 
 **Localmente:**
 
